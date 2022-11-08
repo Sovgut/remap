@@ -1,7 +1,6 @@
 {
   "name": "@sovgut/remap",
-  "version": "1.0.0",
-  "description": "Remap object fields using schema",
+  "version": "1.0.3",
   "main": "index.js",
   "author": "Sergey Sovgut",
   "license": "MIT"

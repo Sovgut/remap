@@ -1,73 +1,27 @@
-/**
- * @param {any} source
- * @param {import(".").Schema} schema
- *
- * @returns {any} Remapped object using schema
- */
-function remap(source, schema) {
-  /**
-   * @type {any}
-   */
-  const response = {};
-
-  /**
-   * If source is not provided, return an empty object
-   */
-  if (!source) return response;
-
-  /**
-   * If schema is not provided, return an "source" object
-   */
-  if (!schema) return source;
-
-  for (const key in schema) {
-    /**
-     * Process schema as non-primitive type
-     */
-    if (typeof schema[key] === 'object') {
-      if (!schema[key].name) {
-        throw new Error(
-          `When remapping, an error occurred due to the fact that the required property "name" was not found in the schema of an object or array in "${key}" key`,
+function remap(e, t) {
+  let r = {};
+  if (!e) return r;
+  if (!t) return e;
+  for (let i in t) {
+    if ('object' == typeof t[i]) {
+      if (!t[i].name)
+        throw Error(
+          `${i} is tying to mapped as object or array but missing "name" field`,
         );
-      }
-
-      /**
-       * Object
-       */
-      if (schema[key].properties) {
-        response[schema[key].name] = remap(source[key], schema[key].properties);
-
+      if (t[i].properties) {
+        r[t[i].name] = remap(e[i], t[i].properties);
         continue;
       }
-
-      /**
-       * Array
-       */
-      if (schema[key].items) {
-        response[schema[key].name] = [];
-
-        for (const item of source[key]) {
-          response[schema[key].name].push(remap(item, schema[key].items));
-        }
-
+      if (t[i].items) {
+        for (let n of ((r[t[i].name] = []), e[i]))
+          r[t[i].name].push(remap(n, t[i].items));
         continue;
       }
-
-      /**
-       * Fallback
-       */
-      response[schema[key].name] = {};
-
+      r[t[i].name] = {};
       continue;
     }
-
-    /**
-     * Process schema as primitive type
-     */
-    response[schema[key]] = source[key];
+    r[t[i]] = e[i];
   }
-
-  return response;
+  return r;
 }
-
 module.exports = { remap };
